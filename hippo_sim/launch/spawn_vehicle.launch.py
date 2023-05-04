@@ -63,19 +63,21 @@ def generate_launch_description():
                                 condition=launch.conditions.IfCondition(
                                     launch.substitutions.LaunchConfiguration(
                                         'fake_state_estimation'))),
-        launch_ros.actions.Node(
+    ])
+    """
+    launch_ros.actions.Node(
             package='hippo_sim',
             executable="fake_vision",
             name="vision",
             condition=launch.conditions.IfCondition(
                 launch.substitutions.LaunchConfiguration('fake_vision'))),
-        launch_ros.actions.Node(
-            package='state_estimation',
-            executable='estimator',
-            name='state_estimator',
-            condition=launch.conditions.UnlessCondition(
-                launch.substitutions.LaunchConfiguration('fake_state_estimation'))),
-    ])
+    launch_ros.actions.Node(
+        package='state_estimation',
+        executable='estimator',
+        name='state_estimator',
+        condition=launch.conditions.UnlessCondition(
+            launch.substitutions.LaunchConfiguration('fake_state_estimation'))),
+    """
 
     return launch.LaunchDescription([
         model_launch_arg,
