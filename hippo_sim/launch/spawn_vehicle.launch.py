@@ -7,6 +7,8 @@ def generate_launch_description():
     package_path = get_package_share_path('hippo_sim')
     default_model_path = package_path / 'models/hippo3/urdf/hippo3.xacro'
     default_vehicle_name = 'uuv00'
+    use_sim_time = launch.substitutions.LaunchConfiguration('use_sim_time')
+
 
     model_launch_arg = launch.actions.DeclareLaunchArgument(
         name='model_path',
@@ -15,6 +17,10 @@ def generate_launch_description():
     vehicle_name_launch_arg = launch.actions.DeclareLaunchArgument(
         name='vehicle_name',
         default_value=default_vehicle_name,
+        description='Vehicle name used as namespace.')
+    use_sim_time_launch_arg = launch.actions.DeclareLaunchArgument(
+        name='use_sim_time',
+        default_value=str(False),
         description='Vehicle name used as namespace.')
     fake_estimator_launch_arg = launch.actions.DeclareLaunchArgument(
         name='fake_state_estimation', default_value='false')
@@ -55,9 +61,11 @@ def generate_launch_description():
                                 output='screen'),
         launch_ros.actions.Node(package='hippo_sim',
                                 executable='bridge',
+                                parameters=[{'use_sim_time' : use_sim_time}],
                                 output='screen'),
         launch_ros.actions.Node(package='hippo_sim',
                                 executable='fake_state_estimator',
+                                parameters=[{'use_sim_time' : use_sim_time}],
                                 name='state_estimator',
                                 output='screen',
                                 condition=launch.conditions.IfCondition(
@@ -81,6 +89,7 @@ def generate_launch_description():
 
     return launch.LaunchDescription([
         model_launch_arg,
+        use_sim_time_launch_arg,
         vehicle_name_launch_arg,
         fake_estimator_launch_arg,
         fake_vision_launch_arg,

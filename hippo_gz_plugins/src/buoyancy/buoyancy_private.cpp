@@ -33,7 +33,6 @@ void PluginPrivate::ParseSdf(const std::shared_ptr<const sdf::Element> &_sdf) {
         } else {
             ignerr << "Missing field 'compensation' in buoyancy plugin" << std::endl;
         }
-        ignerr << "Loaded compensaton value: " << std::to_string(sdf_params_.relative_compensation) << std::endl;
 
         if (element->HasElement("height_scale_limit")) {
             sdf_params_.height_scale_limit =
@@ -49,8 +48,6 @@ void PluginPrivate::ParseSdf(const std::shared_ptr<const sdf::Element> &_sdf) {
         } else {
             ignerr << "Missing field 'origin' in buoyancy plugin" << std::endl;
         }
-        ignerr << "Loaded origin value: " << sdf_params_.origin.X() << ", " << sdf_params_.origin.Y() << ", " <<
-               sdf_params_.origin.Z() << std::endl;
         break;
     }
 }
