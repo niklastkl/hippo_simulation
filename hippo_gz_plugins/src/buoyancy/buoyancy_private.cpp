@@ -95,7 +95,7 @@ void PluginPrivate::ApplyBuoyancy(
   }
   scale = ignition::math::clamp(scale, 0.0, 1.0);
   force *= scale;
-  ignition::math::Vector3d moment = force.Cross(buoyancy_offset);
+  ignition::math::Vector3d moment = buoyancy_offset.Cross(force);
   link_.AddWorldWrench(_ecm, force, moment);
 }
 
