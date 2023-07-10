@@ -24,7 +24,11 @@ def generate_launch_description():
         name='vehicle_name',
         default_value=default_vehicle_name,
         description='Vehicle name used as namespace.')
-    fake_estimator_launch_arg = DeclareLaunchArgument(
+    use_sim_time_launch_arg = launch.actions.DeclareLaunchArgument(
+        name='use_sim_time',
+        default_value=str(False),
+        description='Vehicle name used as namespace.')
+    fake_estimator_launch_arg = launch.actions.DeclareLaunchArgument(
         name='fake_state_estimation', default_value='false')
     fake_vision_launch_arg = DeclareLaunchArgument(name='fake_vision',
                                                    default_value='false')
@@ -111,6 +115,7 @@ def generate_launch_description():
 
     return launch.LaunchDescription([
         model_launch_arg,
+        use_sim_time_launch_arg,
         vehicle_name_launch_arg,
         fake_estimator_launch_arg,
         fake_vision_launch_arg,
