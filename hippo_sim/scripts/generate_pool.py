@@ -10,6 +10,7 @@ import subprocess
 import shlex
 import hashlib
 import glob
+import math
 
 
 def create_base_model():
@@ -57,10 +58,10 @@ def generate_hashes(paths):
 def generate_urdfs(xacro_path, tag_poses, output_dir):
     paths = []
     for tag_data in tag_poses['tag_poses']:
-        name = f'apriltag_{tag_data["id"]}'
+        name = f'apriltag_{tag_data["id"]:03d}'
         mappings = {
-            'size_x': str(tag_data['size']),
-            'size_y': str(tag_data['size']),
+            'size_x': str(tag_data['size'] * 10.0 / 8.0),
+            'size_y': str(tag_data['size'] * 10.0 / 8.0),
             'tag_id': str(tag_data['id'])
         }
         doc = xacro.process_file(xacro_path, mappings=mappings)
@@ -101,9 +102,24 @@ def need_to_rebuild(old_urdf, new_urdf, cache_sdf):
     return False
 
 
+def quat_to_rpy(qw, qx, qy, qz):
+    tmp1 = 2 * (qw * qx + qy * qz)
+    tmp2 = 1 - 2 * (qx**2 + qy**2)
+    roll = math.atan2(tmp1, tmp2)
+
+    tmp1 = math.sqrt(1 + 2 * (qw * qy - qx * qz))
+    tmp2 = math.sqrt(1 - 2 * (qw * qy - qx * qz))
+    pitch = 2 * math.atan2(tmp1, tmp2) - math.pi / 2.0
+
+    tmp1 = 2 * (qw * qz + qx * qy)
+    tmp2 = 1 - 2 * (qy**2 + qz**2)
+    yaw = math.atan2(tmp1, tmp2)
+    return roll, pitch, yaw
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tag-poses', required=True)
+    parser.add_argument('--tag-poses-file', required=True)
     parser.add_argument('--input-file', required=False)
     parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
@@ -117,8 +133,12 @@ def main():
     else:
         package_path = get_package_share_path('hippo_sim')
         xacro_path = package_path / 'models/apriltag/urdf/apriltag.xacro'
-
-    tag_poses = yaml.safe_load(args.tag_poses)
+    try:
+        with open(args.tag_poses_file, 'r') as f:
+            tag_poses = yaml.safe_load(f)
+    except FileNotFoundError as e:
+        print(f'Could not open file {args.tag_poses_file}: {e}')
+        exit(1)
 
     if not os.path.exists(cache_dir):
         os.mkdir(cache_dir)
@@ -148,7 +168,8 @@ def main():
     ]
     for i, tag_model in enumerate(tag_models):
         d = tag_poses['tag_poses'][i]
-        offset_pose(d['x'], d['y'], d['z'], d['R'], d['P'], d['Y'], tag_model)
+        R, P, Y = quat_to_rpy(d['qw'], d['qx'], d['qy'], d['qz'])
+        offset_pose(d['x'], d['y'], d['z'], R, P, Y, tag_model)
         base_model.append(tag_model)
     with open(cache_sdf, 'w') as f:
         f.write(ET.tostring(base_sdf).decode())

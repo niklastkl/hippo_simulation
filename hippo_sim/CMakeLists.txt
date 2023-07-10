@@ -106,7 +106,7 @@ ament_target_dependencies(${exec_name}
 list(APPEND exec_targets ${exec_name})
 
 install(
-  DIRECTORY launch models rviz
+  DIRECTORY launch models config rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
