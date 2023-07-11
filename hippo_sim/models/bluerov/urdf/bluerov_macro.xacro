@@ -90,7 +90,6 @@
                 <base_topic>ground_truth/odometry</base_topic>
             </plugin>
 
-            <!--
             <plugin filename="barometer" name="hippo_gz_plugins::barometer">
                 <link>${link_ns}${base_link_name}</link>
                 <update_rate>100.0</update_rate>
@@ -100,7 +99,7 @@
                 <position>-0.15 0 0</position>
             </plugin>
 
-
+            <!--
             <plugin filename="range_sensor" name="hippo_gz_plugins::range_sensor">
                 <link>${link_ns}${base_link_name}</link>
                 <range_topic>range_topic</range_topic>
