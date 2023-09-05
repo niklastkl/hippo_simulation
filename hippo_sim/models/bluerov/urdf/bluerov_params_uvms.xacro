@@ -8,10 +8,10 @@
     <xacro:property name="added_mass_angular" value="0 0 0" />
     <xacro:property name="damping_linear" value="7 7 7" />
     <xacro:property name="damping_angular" value="0.3 0.3 0.3" />
-    <!-- alpha manipulator weight underwater: 1.405 kg - 0.6206 kg = 0.7001  => 0.7844 / 11.0 (mass bluerov) = 0.0713-->
+    <!--  0.899 / 11.0 (mass bluerov) = 0.0817-->
     <xacro:property name="buoyancy_compensation_AUV" value="1.001" /> <!--1.001 default -->
     <xacro:property name="buoyancy_origin_AUV" value="${[0, 0, 0.005]}" />
-    <xacro:property name="buoyancy_compensation_added" value="0.0713" /> <!-- must be the same as for controller! -->
+    <xacro:property name="buoyancy_compensation_added" value="0.0817" /> <!-- must be the same as for controller! -->
     <xacro:property name="buoyancy_origin_added" value="${[0, 0, 0.05]}" />
 
     <xacro:property name="buoyancy_compensation" value="${buoyancy_compensation_AUV + buoyancy_compensation_added}" />
